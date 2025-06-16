@@ -13,6 +13,9 @@ export const AppContextProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const currency = import.meta.VITE_CURRENCY;
   const [cartItems, setCartItems] = useState({});
+  //SEARCH QUERY;
+  const [searchQuery, setSearchQuery] = useState({});
+
   //function to fetch data
   const fetchProducts = async () => {
     setProducts(dummyProducts);
@@ -45,7 +48,25 @@ export const AppContextProvider = ({ children }) => {
     toast.success("Removed from cart");
     setCartItems(cartData);
   };
-
+  //updating cart-length;
+  const getCartCount = () => {
+    let totalCount = 0;
+    for (const item in cartItems) {
+      totalCount += cartItems[item];
+    }
+    return totalCount;
+  };
+  //get cart total amount;
+  const getCartAmount = () => {
+    let totalAmount = 0;
+    for (const items in cartItems) {
+      let itemInfo = products.find((product) => product._id === items);
+      if (cartItems[items] > 0) {
+        totalAmount += itemInfo.offerPrice * cartItems[items];
+      }
+    }
+    return Math.floor(totalAmount * 100) / 100;
+  };
   const value = {
     navigate,
     user,
@@ -59,6 +80,10 @@ export const AppContextProvider = ({ children }) => {
     removeFromCart,
     addToCart,
     cartItems,
+    searchQuery,
+    setSearchQuery,
+    getCartCount,
+    getCartAmount,
   };
   return <appContext.Provider value={value}>{children}</appContext.Provider>;
 };

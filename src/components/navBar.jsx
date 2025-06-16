@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import logo from "../assets/logo.svg";
@@ -8,7 +8,21 @@ import profile_icon from "../assets/profile_icon.png";
 
 function NavBar() {
   const [open, setOpen] = useState(false);
-  const { user, navigate, setUser, setShowUserLogIn } = useAppContext();
+  const {
+    user,
+    navigate,
+    setUser,
+    setShowUserLogin,
+    searchQuery,
+    getCartCount,
+    setSearchQuery,
+  } = useAppContext();
+  //fuction for redirecting users to the products page
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      navigate("/products");
+    }
+  }, [searchQuery]);
 
   // setLogout function
   const logOut = async () => {
@@ -29,6 +43,7 @@ function NavBar() {
 
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
           <input
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500"
             type="text"
             placeholder="Search products"
@@ -42,7 +57,7 @@ function NavBar() {
         >
           <img src={assets.cart_icon} alt="cart" className="w-6 opacity-80" />
           <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
-            3
+            {getCartCount()}
           </button>
         </div>
 
@@ -66,7 +81,7 @@ function NavBar() {
           </div>
         ) : (
           <button
-            onClick={() => setShowUserLogIn(true)}
+            onClick={() => setShowUserLogin(true)}
             className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary transition text-white rounded-full"
           >
             Login
@@ -74,14 +89,26 @@ function NavBar() {
         )}
       </div>
 
-      <button
-        onClick={() => (open ? setOpen(false) : setOpen(true))}
-        aria-label="Menu"
-        className="sm:hidden"
-      >
-        {/* Menu Icon SVG */}
-        <img src={assets.menu_icon} alt="" />
-      </button>
+      <div className="flex items-center gap-6 sm:hidden">
+        <div
+          onClick={() => navigate("/cart")}
+          className="relative cursor-pointer"
+        >
+          <img src={assets.cart_icon} alt="cart" className="w-6 opacity-80" />
+          <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
+            {getCartCount()}
+          </button>
+        </div>
+
+        <button
+          onClick={() => (open ? setOpen(false) : setOpen(true))}
+          aria-label="Menu"
+          className=""
+        >
+          {/* Menu Icon SVG */}
+          <img src={assets.menu_icon} alt="" />
+        </button>
+      </div>
 
       {/* Mobile Menu */}
       {open && (
@@ -109,7 +136,7 @@ function NavBar() {
             <button
               onClick={() => {
                 setOpen(false);
-                setShowUserLogIn(true);
+                setShowUserLogin(true);
               }}
               className="cursor-pointer px-6 py-2 mt-2 bg-primary hover:bg-primary transition text-white rounded-full text-sm"
             >
