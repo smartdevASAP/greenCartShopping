@@ -125,7 +125,7 @@ function NavBar() {
           </NavLink>
           {/* error */}
           {user && (
-            <NavLink to="/orders" onClick={() => setOpen(false)}>
+            <NavLink to="/my-orders" onClick={() => setOpen(false)}>
               My Orders
             </NavLink>
           )}
