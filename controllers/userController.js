@@ -79,7 +79,7 @@ export const login = async (req, res) => {
       });
     }
     //COMPARING THE PASSWORD IN THE REQUEST BODY AND THE PASSWORD IN THE DATABASE; using bcrypt.compare
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, loggedUser.password);
     if (!isMatch) {
       return res.json({
         success: false,
@@ -104,7 +104,6 @@ export const login = async (req, res) => {
       user: {
         email: loggedUser.email,
         name: loggedUser.name,
-        message: "hello",
       },
     });
   } catch (err) {
@@ -116,4 +115,41 @@ export const login = async (req, res) => {
   }
 };
 
-//6.28
+//check auth:/api/user/is-auth;
+export const isAuth = async (req, res) => {
+  try {
+    const authUser = await user.findById(req.userId).select("-password");
+    return res.json({
+      success: true,
+      authUser,
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+
+//LOGOUT USER -/api/user/logout;
+export const logOut = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    });
+    return res.json({
+      success: true,
+      message: "logged out",
+    });
+  } catch (err) {
+    console.log("error is " + err.message);
+    res.json({
+      status: "fail",
+      message: err.message,
+    });
+  }
+};
+//SELLER CONTROLLER FUNCTION;
